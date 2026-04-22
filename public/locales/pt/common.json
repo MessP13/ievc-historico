@@ -1,0 +1,280 @@
+{
+  "app": {
+    "name": "IEVC — Memória Histórica",
+    "tagline": "30 Anos de Fé e Missão"
+  },
+  "nav": {
+    "save": "Guardar",
+    "saving": "A guardar...",
+    "saved": "Guardado",
+    "continue": "Continuar",
+    "back": "Voltar",
+    "submit": "Enviar respostas",
+    "submitting": "A enviar..."
+  },
+  "progress": {
+    "section": "Secção {{current}} de {{total}}",
+    "percent": "{{percent}}% concluído"
+  },
+  "sections": {
+    "identification": {
+      "title": "Os seus dados",
+      "subtitle": "Diga-nos quem é"
+    },
+    "local_church": {
+      "title": "A sua igreja local",
+      "subtitle": "Como começou tudo aqui"
+    },
+    "missionary_memory": {
+      "title": "Os missionários",
+      "subtitle": "Os que vieram e plantaram"
+    },
+    "development": {
+      "title": "Crescimento",
+      "subtitle": "Como a igreja cresceu"
+    },
+    "structure": {
+      "title": "Estrutura da IEVC",
+      "subtitle": "A organização que conhecemos"
+    },
+    "leadership": {
+      "title": "Liderança",
+      "subtitle": "Quem pastoreou este rebanho"
+    },
+    "testimonies": {
+      "title": "Testemunhos",
+      "subtitle": "O que Deus fez aqui"
+    },
+    "materials": {
+      "title": "Fotos e documentos",
+      "subtitle": "Preservar a memória visual"
+    },
+    "timeline": {
+      "title": "Datas importantes",
+      "subtitle": "A história em números"
+    },
+    "final_notes": {
+      "title": "Observações finais",
+      "subtitle": "Qualquer coisa que não disse ainda"
+    }
+  },
+  "questions": {
+    "full_name": {
+      "label": "O seu nome completo",
+      "placeholder": "Ex: João Manuel da Silva"
+    },
+    "age": {
+      "label": "Idade (opcional)",
+      "placeholder": "Ex: 65"
+    },
+    "language": {
+      "label": "Língua em que prefere responder"
+    },
+    "church_role": {
+      "label": "A sua função na igreja"
+    },
+    "join_year": {
+      "label": "Em que ano entrou para a IEVC?"
+    },
+    "service_years": {
+      "label": "Há quantos anos serve na igreja?",
+      "placeholder": "Ex: 15"
+    },
+    "phone": {
+      "label": "Contacto / WhatsApp",
+      "placeholder": "Ex: +258 84 000 0000"
+    },
+    "founding_year": {
+      "label": "Em que ano foi fundada a sua igreja local?"
+    },
+    "founder_name": {
+      "label": "Quem fundou esta igreja?",
+      "placeholder": "Nome(s) do(s) fundador(es)"
+    },
+    "first_leaders": {
+      "label": "Quem foram os primeiros líderes locais?",
+      "placeholder": "Liste os nomes que se recorda..."
+    },
+    "first_worship_place": {
+      "label": "Onde eram realizados os primeiros cultos?"
+    },
+    "early_years_desc": {
+      "label": "Como descreve os primeiros anos da igreja nesta região?",
+      "placeholder": "Conte como foi no início..."
+    },
+    "missionaries_1996": {
+      "label": "O que sabe sobre a chegada dos missionários brasileiros em 1996?",
+      "placeholder": "Partilhe o que sabe ou ouviu dizer...",
+      "unknown_option": "Não estava presente / Não sei"
+    },
+    "missionary_names": {
+      "label": "Que nomes de missionários se recorda?",
+      "placeholder": "Ex: Pastor João, Irmão Paulo..."
+    },
+    "missionary_locations": {
+      "label": "Onde esses missionários trabalharam?",
+      "placeholder": "Cidades, distritos, locais..."
+    },
+    "missionary_impact": {
+      "label": "Qual foi o impacto deles na igreja e na comunidade?",
+      "placeholder": "Descreva o que mudou..."
+    },
+    "missionary_stories": {
+      "label": "Conhece histórias marcantes envolvendo esses missionários?",
+      "placeholder": "Partilhe uma história que ficou na memória..."
+    },
+    "church_growth": {
+      "label": "Como a igreja cresceu nesta região?",
+      "placeholder": "Conte o processo de crescimento..."
+    },
+    "first_congregations": {
+      "label": "Quais foram as primeiras congregações abertas?",
+      "placeholder": "Nomes e locais..."
+    },
+    "main_challenges": {
+      "label": "Quais foram os principais desafios?"
+    },
+    "challenges_detail": {
+      "label": "Explique esses desafios",
+      "placeholder": "Como foram enfrentados?"
+    },
+    "remarkable_moments": {
+      "label": "Houve momentos marcantes — milagres, avivamentos, eventos?",
+      "placeholder": "Conte o que aconteceu..."
+    },
+    "external_support": {
+      "label": "Houve apoio externo (Brasil, Inglaterra ou outros)?"
+    },
+    "external_support_detail": {
+      "label": "Explique esse apoio",
+      "placeholder": "Quem ajudou, quando e como?"
+    },
+    "ievc_structure_year": {
+      "label": "Quando a igreja passou a estar estruturada como IEVC?"
+    },
+    "vcm_to_ievc_change": {
+      "label": "O que mudou com a transição de VCM para IEVC em 2010?",
+      "placeholder": "Mudanças que sentiu..."
+    },
+    "leaders_that_period": {
+      "label": "Quem foram os líderes principais nesse período?",
+      "placeholder": "Nomes e funções..."
+    },
+    "pastor_list": {
+      "label": "Descreva os pastores que lideraram esta igreja (resposta aberta)",
+      "placeholder": "Pode escrever nomes, períodos e contexto histórico livremente..."
+    },
+    "leader_formation": {
+      "label": "Houve formação de novos líderes locais? Como ocorreu?",
+      "placeholder": "Descreva o processo de formação..."
+    },
+    "personal_testimony": {
+      "label": "Conte uma experiência marcante que viveu na igreja",
+      "placeholder": "Uma história que mudou a sua vida..."
+    },
+    "community_impact": {
+      "label": "Como a igreja impactou a comunidade local?",
+      "placeholder": "Exemplos concretos de impacto..."
+    },
+    "transformation": {
+      "label": "Há testemunhos de transformação social ou espiritual?",
+      "placeholder": "Histórias de vidas transformadas..."
+    },
+    "has_photos": {
+      "label": "Possui fotos antigas da igreja?"
+    },
+    "has_documents": {
+      "label": "Possui documentos históricos?"
+    },
+    "willing_to_share": {
+      "label": "Está disposto a partilhar esses materiais?"
+    },
+    "attachments": {
+      "label": "Enviar fotos ou documentos",
+      "button": "Escolher ficheiros",
+      "drag_text": "Arraste fotos ou documentos aqui",
+      "description_placeholder": "Descreva esta foto ou documento..."
+    },
+    "referral_name": {
+      "label": "Conhece alguém que possa contribuir? Nome:",
+      "placeholder": "Nome da pessoa"
+    },
+    "referral_phone": {
+      "label": "Contacto dessa pessoa",
+      "placeholder": "+258 8X XXX XXXX"
+    },
+    "timeline_arrival": {
+      "label": "Chegada da igreja a esta área",
+      "example": "Ex: 1998 ou 'cerca de 2000'"
+    },
+    "timeline_temple": {
+      "label": "Construção do templo / sede",
+      "example": "Ex: 2003"
+    },
+    "timeline_first_leader": {
+      "label": "Primeira liderança local",
+      "example": "Ex: 2001 ou 'início dos anos 2000'"
+    },
+    "timeline_expansion": {
+      "label": "Expansão para outras áreas / distritos",
+      "example": "Ex: 2005-2010"
+    },
+    "additional_info": {
+      "label": "Há algo importante que não foi perguntado?",
+      "placeholder": "Acrescente qualquer informação relevante que queira partilhar..."
+    }
+  },
+  "date_flex": {
+    "know_exact": "Sei o ano exacto",
+    "know_approximate": "Sei aproximadamente",
+    "dont_know": "Não sei",
+    "year_placeholder": "Ex: 1998",
+    "from_placeholder": "De: ex. 1995",
+    "to_placeholder": "Até: ex. 2000",
+    "notes_placeholder": "Notas sobre esta data..."
+  },
+  "yes_no": {
+    "yes": "Sim",
+    "no": "Não",
+    "not_sure": "Não tenho certeza"
+  },
+  "upload": {
+    "preview": "Pré-visualizar",
+    "remove": "Remover",
+    "pending": "A aguardar",
+    "uploading": "A enviar...",
+    "uploaded": "Enviado ✓",
+    "failed": "Falhou",
+    "compress_notice": "As imagens são comprimidas automaticamente",
+    "max_size": "Tamanho máximo: 10MB por ficheiro"
+  },
+  "auth": {
+    "title": "Entrar",
+    "phone_label": "O seu número de telefone",
+    "phone_placeholder": "+258 84 000 0000",
+    "send_otp": "Enviar código por SMS",
+    "otp_label": "Código recebido por SMS",
+    "otp_placeholder": "000000",
+    "verify": "Verificar",
+    "sending": "A enviar...",
+    "resend": "Reenviar código",
+    "welcome": "Bem-vindo",
+    "new_user_prompt": "Primeiro, diga-nos o seu nome"
+  },
+  "submit": {
+    "confirm_title": "Confirmar envio",
+    "confirm_body": "Depois de enviar, as suas respostas ficam guardadas e serão revistas pelo pastor responsável. Tem a certeza?",
+    "confirm_yes": "Sim, enviar",
+    "confirm_no": "Voltar a rever",
+    "success_title": "Respostas enviadas!",
+    "success_body": "Obrigado pela sua contribuição para a história da IEVC. As suas memórias são preciosas.",
+    "declaration": "Declaro que as informações prestadas são verdadeiras conforme o meu conhecimento."
+  },
+  "errors": {
+    "required": "Este campo é obrigatório",
+    "invalid_phone": "Número de telefone inválido",
+    "invalid_year": "Ano inválido",
+    "upload_failed": "Não foi possível enviar o ficheiro",
+    "save_failed": "Não foi possível guardar. Verifique a sua ligação."
+  }
+}

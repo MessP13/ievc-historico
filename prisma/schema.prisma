@@ -1,0 +1,110 @@
+// This is your Prisma schema file
+// Learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Province {
+  id        Int        @id @default(autoincrement())
+  name      String
+  districts District[]
+  forms     Form[]
+}
+
+model District {
+  id         Int      @id @default(autoincrement())
+  name       String
+  provinceId Int
+  province   Province @relation(fields: [provinceId], references: [id])
+  forms      Form[]
+}
+
+model User {
+  id           String   @id @default(uuid())
+  phone        String   @unique
+  fullName     String?
+  role         Role     @default(MEMBER)
+  createdAt    DateTime @default(now())
+  forms        Form[]   @relation("FormOwner")
+  approvedForms Form[]  @relation("FormApprover")
+}
+
+enum Role {
+  MEMBER
+  PASTOR
+  ADMIN
+}
+
+model Form {
+  id           String       @id @default(uuid())
+  userId       String
+  user         User         @relation("FormOwner", fields: [userId], references: [id])
+  provinceId   Int?
+  province     Province?    @relation(fields: [provinceId], references: [id])
+  districtId   Int?
+  district     District?    @relation(fields: [districtId], references: [id])
+  churchName   String?
+  language     String       @default("pt")
+  status       FormStatus   @default(DRAFT)
+  submittedAt  DateTime?
+  approvedAt   DateTime?
+  approvedById String?
+  approvedBy   User?        @relation("FormApprover", fields: [approvedById], references: [id])
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  answers      Answer[]
+  attachments  Attachment[]
+}
+
+enum FormStatus {
+  DRAFT
+  SUBMITTED
+  APPROVED
+  REJECTED
+}
+
+model Answer {
+  id          String   @id @default(uuid())
+  formId      String
+  form        Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  section     String
+  questionKey String
+  value       Json
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([formId, questionKey])
+  @@index([formId])
+  @@index([questionKey])
+}
+
+model Attachment {
+  id               String         @id @default(uuid())
+  formId           String
+  form             Form           @relation(fields: [formId], references: [id], onDelete: Cascade)
+  fileUrl          String?
+  thumbnailUrl     String?
+  originalFilename String?
+  mimeType         String?
+  sizeBytes        Int?
+  description      String?
+  uploadStatus     UploadStatus   @default(PENDING)
+  localId          String?        // IndexedDB reference for offline sync
+  createdAt        DateTime       @default(now())
+
+  @@index([formId])
+}
+
+enum UploadStatus {
+  PENDING
+  UPLOADING
+  UPLOADED
+  FAILED
+}

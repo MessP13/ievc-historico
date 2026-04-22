@@ -1,0 +1,118 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: 'Playfair Display', serif;
+  --font-body: 'Source Serif 4', serif;
+}
+
+/* Base — large, readable, warm */
+@layer base {
+  html {
+    font-size: 17px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-earth-50 text-earth-900;
+    font-family: var(--font-body);
+    min-height: 100vh;
+  }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+  }
+
+  /* Large touch targets */
+  button, [role="button"], label, a {
+    min-height: 48px;
+  }
+}
+
+/* Texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+@layer components {
+  /* Card */
+  .card {
+    @apply bg-white rounded-2xl shadow-sm border border-earth-100 p-6;
+  }
+
+  /* Big button — primary */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-brand-600 hover:bg-brand-700 active:bg-brand-800
+           text-white font-semibold
+           px-8 py-4 rounded-xl text-lg
+           transition-all duration-150
+           min-h-[56px] w-full
+           disabled:opacity-50 disabled:cursor-not-allowed
+           shadow-md hover:shadow-lg;
+  }
+
+  /* Big button — secondary */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2
+           bg-earth-100 hover:bg-earth-200 active:bg-earth-300
+           text-earth-800 font-semibold
+           px-8 py-4 rounded-xl text-lg
+           transition-all duration-150
+           min-h-[56px] w-full;
+  }
+
+  /* Input */
+  .field-input {
+    @apply w-full rounded-xl border-2 border-earth-200
+           bg-white px-5 py-4 text-lg text-earth-900
+           placeholder:text-earth-400
+           focus:border-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-200
+           transition-colors duration-150
+           min-h-[56px];
+  }
+
+  /* Textarea */
+  .field-textarea {
+    @apply field-input min-h-[140px] resize-y leading-relaxed;
+  }
+
+  /* Label */
+  .field-label {
+    @apply block text-lg font-semibold text-earth-800 mb-2;
+  }
+
+  /* Section header */
+  .section-header {
+    @apply mb-8 pb-6 border-b border-earth-100;
+  }
+
+  /* Progress bar */
+  .progress-bar {
+    @apply h-2 rounded-full bg-earth-100 overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-brand-500 to-brand-400 rounded-full transition-all duration-500;
+  }
+
+  /* Choice pill */
+  .choice-pill {
+    @apply flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer
+           transition-all duration-150 text-left min-h-[56px];
+  }
+
+  .choice-pill-unselected {
+    @apply border-earth-200 bg-white hover:border-brand-300 hover:bg-brand-50;
+  }
+
+  .choice-pill-selected {
+    @apply border-brand-500 bg-brand-50 text-brand-800;
+  }
+}

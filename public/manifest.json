@@ -1,0 +1,14 @@
+{
+  "name": "IEVC — Memória Histórica",
+  "short_name": "IEVC História",
+  "description": "Formulário de levantamento histórico da Igreja Evangélica Visão Cristã",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f9f6f0",
+  "theme_color": "#de6014",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
