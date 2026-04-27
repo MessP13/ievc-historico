@@ -56,7 +56,7 @@
     "ievc_structure_year": { "label": "When did the church become structured as IEVC?" },
     "vcm_to_ievc_change": { "label": "What changed with the transition from VCM to IEVC in 2010?", "placeholder": "Changes you noticed..." },
     "leaders_that_period": { "label": "Who were the main leaders during that period?", "placeholder": "Names and roles..." },
-    "pastor_list": { "label": "Describe the pastors who led this church (open answer)", "placeholder": "You can freely write names, periods, and historical context..." },
+    "pastor_list": { "label": "Pastors who led this church", "add_button": "Add pastor", "name_placeholder": "Pastor name", "year_start": "Start year", "year_end": "End year", "year_end_present": "To present", "notes_placeholder": "Notes (optional)" },
     "leader_formation": { "label": "Were new local leaders trained? How?", "placeholder": "Describe the training process..." },
     "personal_testimony": { "label": "Share a remarkable experience you had in the church", "placeholder": "A story that changed your life..." },
     "community_impact": { "label": "How did the church impact the local community?", "placeholder": "Concrete examples of impact..." },

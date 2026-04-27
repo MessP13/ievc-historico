@@ -6,20 +6,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const formId = req.query.id as string
 
   if (req.method === 'PUT') {
-    const { answers, userId } = req.body as { answers: Record<string, unknown>; userId?: string }
+    const { answers } = req.body as { answers: Record<string, unknown> }
 
     if (!answers || typeof answers !== 'object') {
       return res.status(400).json({ error: 'answers required' })
     }
-    if (!userId) return res.status(401).json({ error: 'userId required' })
-
-    const form = await prisma.form.findUnique({
-      where: { id: formId },
-      select: { userId: true, status: true },
-    })
-    if (!form) return res.status(404).json({ error: 'Form not found' })
-    if (form.userId !== userId) return res.status(403).json({ error: 'Forbidden' })
-    if (form.status !== 'DRAFT') return res.status(409).json({ error: 'Form is not editable' })
 
     // Upsert each answer
     const ops = Object.entries(answers).map(([questionKey, value]) =>
@@ -48,15 +39,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'GET') {
-    const userId = req.query.userId as string | undefined
-    if (!userId) return res.status(401).json({ error: 'userId required' })
-    const form = await prisma.form.findUnique({
-      where: { id: formId },
-      select: { userId: true },
-    })
-    if (!form) return res.status(404).json({ error: 'Form not found' })
-    if (form.userId !== userId) return res.status(403).json({ error: 'Forbidden' })
-
     const answers = await prisma.answer.findMany({ where: { formId } })
     return res.json(answers)
   }

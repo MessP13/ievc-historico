@@ -161,8 +161,13 @@
       "placeholder": "Nomes e funções..."
     },
     "pastor_list": {
-      "label": "Descreva os pastores que lideraram esta igreja (resposta aberta)",
-      "placeholder": "Pode escrever nomes, períodos e contexto histórico livremente..."
+      "label": "Pastores que lideraram esta igreja",
+      "add_button": "Adicionar pastor",
+      "name_placeholder": "Nome do pastor",
+      "year_start": "Ano de início",
+      "year_end": "Ano de fim",
+      "year_end_present": "Até hoje",
+      "notes_placeholder": "Notas (opcional)"
     },
     "leader_formation": {
       "label": "Houve formação de novos líderes locais? Como ocorreu?",

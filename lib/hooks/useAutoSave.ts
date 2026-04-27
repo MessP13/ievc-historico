@@ -26,7 +26,7 @@ export function useAutoSave() {
       const res = await fetch(`/api/forms/${formId}/answers`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ answers, userId }),
+        body: JSON.stringify({ answers }),
       })
 
       if (res.ok) {

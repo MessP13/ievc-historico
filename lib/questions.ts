@@ -10,6 +10,7 @@ export type QuestionType =
   | 'MULTI_SELECT'
   | 'YES_NO'
   | 'DATE_FLEX'
+  | 'PASTOR_LIST'
   | 'UPLOAD'
 
 export interface SelectOption {
@@ -120,7 +121,7 @@ export const SECTIONS: Section[] = [
     id: 'leadership',
     number: 6,
     questions: [
-      { key: 'pastor_list',         type: 'TEXT_LONG', required: false },
+      { key: 'pastor_list',         type: 'PASTOR_LIST', required: false },
       { key: 'leader_formation',    type: 'TEXT_LONG',   required: false },
     ]
   },

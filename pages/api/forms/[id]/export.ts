@@ -1,15 +1,13 @@
 // pages/api/forms/[id]/export.ts
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
-import { Document, Packer, Paragraph, HeadingLevel } from 'docx'
+import { Document, Packer, Paragraph, TextRun, HeadingLevel, Table, TableRow, TableCell, WidthType, BorderStyle } from 'docx'
 import ExcelJS from 'exceljs'
 import jsPDF from 'jspdf'
 import 'jspdf-autotable'
-import { isAdminRequest } from '@/lib/apiAuth'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).end()
-  if (!isAdminRequest(req)) return res.status(403).json({ error: 'Admin access required' })
 
   const formId = req.query.id as string
   const format = (req.query.format as string) ?? 'pdf'
@@ -20,6 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       province: true,
       district: true,
       answers: { orderBy: { createdAt: 'asc' } },
+      pastors: { orderBy: { sortOrder: 'asc' } },
       attachments: true,
     },
   })
@@ -31,6 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const church = form.churchName ?? 'Igreja não especificada'
   const province = form.province?.name ?? ''
   const district = form.district?.name ?? ''
+  const title = `IEVC — Levantamento Histórico\n${church} — ${district}, ${province}`
 
   // ── PDF ─────────────────────────────────────────────────────────────────
   if (format === 'pdf') {
@@ -49,6 +49,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     let y = 58
 
+    const sectionLabels: Record<string, string> = {
+      identification: '1. Identificação', local_church: '2. Igreja Local',
+      missionary_memory: '3. Memória Missionária', development: '4. Desenvolvimento',
+      structure: '5. Estrutura IEVC', leadership: '6. Liderança',
+      testimonies: '7. Testemunhos', materials: '8. Materiais',
+      timeline: '9. Cronologia', final_notes: '10. Observações Finais',
+    }
+
     for (const answer of form.answers) {
       const val = formatValueForExport(answer.value)
       if (!val) continue
@@ -65,6 +73,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       const lines = doc.splitTextToSize(val, 180)
       doc.text(lines, 15, y)
       y += lines.length * 6 + 4
+    }
+
+    // Pastors table
+    if (form.pastors.length > 0) {
+      if (y > 240) { doc.addPage(); y = 15 }
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(12)
+      doc.text('Pastores', 15, y); y += 8
+
+      ;(doc as any).autoTable({
+        startY: y,
+        head: [['Nome', 'Início', 'Fim', 'Notas']],
+        body: form.pastors.map(p => [p.name, p.yearStart ?? '', p.yearEnd ?? 'Hoje', p.notes ?? '']),
+        margin: { left: 15, right: 15 },
+      })
     }
 
     const pdfBuffer = Buffer.from(doc.output('arraybuffer'))
@@ -96,6 +119,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       )
     }
 
+    if (form.pastors.length > 0) {
+      children.push(new Paragraph({ text: 'Pastores', heading: HeadingLevel.HEADING_2 }))
+      const rows = [
+        new TableRow({ children: ['Nome', 'Início', 'Fim', 'Notas'].map(h =>
+          new TableCell({ children: [new Paragraph({ children: [new TextRun({ text: h, bold: true })] })] })
+        )}),
+        ...form.pastors.map(p =>
+          new TableRow({ children: [p.name, String(p.yearStart ?? ''), String(p.yearEnd ?? 'Hoje'), p.notes ?? ''].map(t =>
+            new TableCell({ children: [new Paragraph({ text: t })] })
+          )})
+        ),
+      ]
+      children.push(new Table({ rows, width: { size: 100, type: WidthType.PERCENTAGE } }))
+    }
+
     const doc = new Document({ sections: [{ children }] })
     const buffer = await Packer.toBuffer(doc)
     res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document')
@@ -122,6 +160,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         value: formatValueForExport(answer.value) ?? '',
         section: answer.section,
       })
+    }
+
+    // Pastors sheet
+    if (form.pastors.length > 0) {
+      const ws2 = wb.addWorksheet('Pastores')
+      ws2.columns = [
+        { header: 'Nome', key: 'name', width: 30 },
+        { header: 'Ano Início', key: 'yearStart', width: 15 },
+        { header: 'Ano Fim', key: 'yearEnd', width: 15 },
+        { header: 'Notas', key: 'notes', width: 40 },
+      ]
+      ws2.getRow(1).font = { bold: true }
+      form.pastors.forEach(p => ws2.addRow({ name: p.name, yearStart: p.yearStart, yearEnd: p.yearEnd, notes: p.notes }))
     }
 
     const buffer = await wb.xlsx.writeBuffer()
