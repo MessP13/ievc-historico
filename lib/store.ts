@@ -2,6 +2,14 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 
+export interface PastorEntry {
+  id: string
+  name: string
+  yearStart?: number
+  yearEnd?: number
+  notes?: string
+}
+
 export interface DateFlexValue {
   type: 'date_flex'
   exact?: number | null
@@ -30,6 +38,7 @@ export type AnswerValue =
   | boolean
   | string[]
   | DateFlexValue
+  | PastorEntry[]
   | null
 
 export interface FormState {
