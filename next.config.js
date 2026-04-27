@@ -3,23 +3,20 @@ const withPWA = require('@ducanh2912/next-pwa').default({
   disable: process.env.NODE_ENV === 'development',
   register: true,
   skipWaiting: true,
-  cacheOnFrontEndNav: true,
-  aggressiveFrontEndNavCaching: true,
 })
+
+const { i18n } = require('./next-i18next.config')
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  i18n,
   images: {
-    domains: ['pub-*.r2.dev'],
     remotePatterns: [
       { protocol: 'https', hostname: '*.supabase.co' },
+      { protocol: 'https', hostname: '*.r2.dev' },
     ],
     formats: ['image/avif', 'image/webp'],
-  },
-  i18n: {
-    locales: ['pt', 'en', 'sn', 'ts', 'nd'],
-    defaultLocale: 'pt',
   },
 }
 
