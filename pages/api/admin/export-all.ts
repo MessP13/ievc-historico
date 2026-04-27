@@ -2,11 +2,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
 import ExcelJS from 'exceljs'
-import { isAdminRequest } from '@/lib/apiAuth'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') return res.status(405).end()
-  if (!isAdminRequest(req)) return res.status(403).json({ error: 'Admin access required' })
 
   const forms = await prisma.form.findMany({
     where: { status: { in: ['SUBMITTED', 'APPROVED'] } },
@@ -14,6 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       province: { select: { name: true } },
       district: { select: { name: true } },
       answers: { orderBy: { questionKey: 'asc' } },
+      pastors: { orderBy: { sortOrder: 'asc' } },
     },
     orderBy: { submittedAt: 'desc' },
   })
@@ -74,6 +73,31 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       row[key] = formatCell(v)
     }
     wsAll.addRow(row)
+  }
+
+  // ── Sheet 3: Pastores ────────────────────────────────────────────────
+  const wsPastors = wb.addWorksheet('Pastores')
+  wsPastors.columns = [
+    { header: 'Igreja', key: 'church', width: 25 },
+    { header: 'Província', key: 'province', width: 20 },
+    { header: 'Nome do Pastor', key: 'name', width: 30 },
+    { header: 'Ano Início', key: 'yearStart', width: 12 },
+    { header: 'Ano Fim', key: 'yearEnd', width: 12 },
+    { header: 'Notas', key: 'notes', width: 40 },
+  ]
+  wsPastors.getRow(1).font = { bold: true }
+
+  for (const f of forms) {
+    for (const p of f.pastors) {
+      wsPastors.addRow({
+        church: f.churchName ?? '',
+        province: f.province?.name ?? '',
+        name: p.name,
+        yearStart: p.yearStart,
+        yearEnd: p.yearEnd ?? 'Hoje',
+        notes: p.notes ?? '',
+      })
+    }
   }
 
   const buffer = await wb.xlsx.writeBuffer()

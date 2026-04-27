@@ -60,6 +60,7 @@ model Form {
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
   answers      Answer[]
+  pastors      PastorEntry[]
   attachments  Attachment[]
 }
 
@@ -83,6 +84,19 @@ model Answer {
   @@unique([formId, questionKey])
   @@index([formId])
   @@index([questionKey])
+}
+
+model PastorEntry {
+  id        String   @id @default(uuid())
+  formId    String
+  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  name      String
+  yearStart Int?
+  yearEnd   Int?
+  notes     String?
+  sortOrder Int      @default(0)
+
+  @@index([formId])
 }
 
 model Attachment {
