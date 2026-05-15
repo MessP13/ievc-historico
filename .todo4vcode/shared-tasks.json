@@ -1,0 +1,42 @@
+{
+  "format": "todo4vcode-shared-tasks",
+  "version": "1.0.0",
+  "tasks": [
+    {
+      "id": "scan-sgs06t",
+      "text": "This file should not be edited",
+      "description": "[NOTE] next-env.d.ts:4",
+      "tags": [
+        "note",
+        "next-env.d.ts",
+        "next-env.d.ts:4"
+      ],
+      "priority": "Could",
+      "status": "In Progress",
+      "completed": false,
+      "createdAt": 1778834175497,
+      "completedAt": "2026-05-15T00:00:00+02:00",
+      "order": 1000,
+      "source": {
+        "type": "comment-scan",
+        "file": "next-env.d.ts",
+        "line": 4,
+        "marker": "NOTE"
+      }
+    },
+    {
+      "id": "z9skensql",
+      "text": "Contextualização",
+      "description": "Analise o projecto inteiro, o site ievc-historico.vercel.app, o projecto no vercel, supabase e github. Depois crie um implementation_plan com o estado atual do projecto, um resumo do que foi feito e os planos a seguir. Este documento será integrado com a extensão ToDo4VCode e deverá sempre ser atualizado.",
+      "tags": [
+        "Ordens"
+      ],
+      "priority": "Must",
+      "status": "Done",
+      "completed": true,
+      "createdAt": 1778834508639,
+      "completedAt": "2026-05-15T00:00:00+02:00",
+      "order": 2000
+    }
+  ]
+}
