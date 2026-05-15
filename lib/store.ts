@@ -44,6 +44,7 @@ export type AnswerValue =
 export interface FormState {
   formId: string | null
   userId: string | null
+  clientId: string | null
   currentSection: number
   answers: Record<string, AnswerValue>
   attachments: AttachmentLocal[]
@@ -54,6 +55,7 @@ export interface FormState {
   // Actions
   setFormId: (id: string) => void
   setUserId: (id: string) => void
+  setClientId: (id: string) => void
   setSection: (n: number) => void
   setAnswer: (key: string, value: AnswerValue) => void
   setAttachments: (attachments: AttachmentLocal[]) => void
@@ -69,6 +71,7 @@ export interface FormState {
 const initialState = {
   formId: null,
   userId: null,
+  clientId: null,
   currentSection: 1,
   answers: {},
   attachments: [],
@@ -84,6 +87,7 @@ export const useFormStore = create<FormState>()(
 
       setFormId: (id) => set({ formId: id }),
       setUserId: (id) => set({ userId: id }),
+      setClientId: (id) => set({ clientId: id }),
       setSection: (n) => set({ currentSection: n }),
       setAnswer: (key, value) =>
         set((state) => ({ answers: { ...state.answers, [key]: value } })),

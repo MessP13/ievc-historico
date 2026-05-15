@@ -84,7 +84,7 @@ export default function EntrarPage() {
       await fetch('/api/users/me', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ fullName: name.trim(), phone }),
+        body: JSON.stringify({ userId: user.id, fullName: name.trim(), phone }),
       })
 
       await createFormAndRedirect(user.id)

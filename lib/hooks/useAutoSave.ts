@@ -7,7 +7,7 @@ const DEBOUNCE_MS = 2000
 
 export function useAutoSave() {
   const {
-    formId, userId, answers, attachments,
+    formId, answers,
     isSaving, setSaving, setLastSaved, isSubmitted
   } = useFormStore()
 
@@ -15,7 +15,7 @@ export function useAutoSave() {
   const prevAnswersRef = useRef<string>('')
 
   const save = useCallback(async () => {
-    if (!formId || !userId || isSubmitted) return
+    if (!formId || isSubmitted) return
 
     const answersJson = JSON.stringify(answers)
     if (answersJson === prevAnswersRef.current) return
@@ -37,7 +37,7 @@ export function useAutoSave() {
     } finally {
       setSaving(false)
     }
-  }, [formId, userId, answers, isSubmitted, setSaving, setLastSaved])
+  }, [formId, answers, isSubmitted, setSaving, setLastSaved])
 
   useEffect(() => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current)

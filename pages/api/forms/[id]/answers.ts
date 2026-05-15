@@ -1,6 +1,7 @@
 // pages/api/forms/[id]/answers.ts
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { prisma } from '@/lib/prisma'
+import { getFormMetadataFromAnswers, getQuestionSection } from '@/lib/questionSections'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const formId = req.query.id as string
@@ -12,6 +13,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'answers required' })
     }
 
+    const metadata = getFormMetadataFromAnswers(answers)
+
     // Upsert each answer
     const ops = Object.entries(answers).map(([questionKey, value]) =>
       prisma.answer.upsert({
@@ -20,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         create: {
           formId,
           questionKey,
-          section: getSection(questionKey),
+          section: getQuestionSection(questionKey),
           value: value as any,
         },
       })
@@ -31,9 +34,46 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       ...ops,
       prisma.form.update({
         where: { id: formId },
-        data: { updatedAt: new Date() },
+        data: {
+          provinceId: metadata.provinceId,
+          districtId: metadata.districtId,
+          churchName: metadata.churchName,
+          language: metadata.language,
+          updatedAt: new Date(),
+        },
       }),
     ])
+
+    if (Array.isArray(answers.pastor_list)) {
+      const pastors = answers.pastor_list
+        .filter((item: any) => typeof item?.name === 'string' && item.name.trim())
+        .map((item: any, index: number) => ({
+          formId,
+          name: item.name.trim(),
+          yearStart: typeof item.yearStart === 'number' ? item.yearStart : null,
+          yearEnd: typeof item.yearEnd === 'number' ? item.yearEnd : null,
+          notes: typeof item.notes === 'string' ? item.notes : null,
+          sortOrder: index,
+        }))
+
+      await prisma.$transaction([
+        prisma.pastorEntry.deleteMany({ where: { formId } }),
+        ...(pastors.length ? [prisma.pastorEntry.createMany({ data: pastors })] : []),
+      ])
+    }
+
+    if (metadata.fullName || metadata.phone) {
+      const form = await prisma.form.findUnique({ where: { id: formId }, select: { userId: true } })
+      if (form) {
+        await prisma.user.update({
+          where: { id: form.userId },
+          data: {
+            ...(metadata.fullName ? { fullName: metadata.fullName } : {}),
+            ...(metadata.phone ? { phone: metadata.phone } : {}),
+          },
+        }).catch(() => undefined)
+      }
+    }
 
     return res.json({ ok: true, savedAt: new Date().toISOString() })
   }
@@ -44,34 +84,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   res.status(405).end()
-}
-
-// Map question key to section id
-function getSection(key: string): string {
-  const map: Record<string, string> = {
-    full_name: 'identification', age: 'identification', language: 'identification',
-    church_role: 'identification', join_year: 'identification',
-    service_years: 'identification', phone: 'identification',
-    founding_year: 'local_church', founder_name: 'local_church',
-    first_leaders: 'local_church', first_worship_place: 'local_church',
-    early_years_desc: 'local_church',
-    missionaries_1996: 'missionary_memory', missionary_names: 'missionary_memory',
-    missionary_locations: 'missionary_memory', missionary_impact: 'missionary_memory',
-    missionary_stories: 'missionary_memory',
-    church_growth: 'development', first_congregations: 'development',
-    main_challenges: 'development', challenges_detail: 'development',
-    remarkable_moments: 'development', external_support: 'development',
-    external_support_detail: 'development',
-    ievc_structure_year: 'structure', vcm_to_ievc_change: 'structure',
-    leaders_that_period: 'structure',
-    pastor_list: 'leadership', leader_formation: 'leadership',
-    personal_testimony: 'testimonies', community_impact: 'testimonies',
-    transformation: 'testimonies',
-    has_photos: 'materials', has_documents: 'materials', willing_to_share: 'materials',
-    referral_name: 'materials', referral_phone: 'materials',
-    timeline_arrival: 'timeline', timeline_temple: 'timeline',
-    timeline_first_leader: 'timeline', timeline_expansion: 'timeline',
-    additional_info: 'final_notes',
-  }
-  return map[key] ?? 'other'
 }

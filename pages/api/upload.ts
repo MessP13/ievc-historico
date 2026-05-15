@@ -4,6 +4,7 @@ import formidable from 'formidable'
 import fs from 'fs'
 import path from 'path'
 import { createServerClient } from '@/lib/supabase'
+import { prisma } from '@/lib/prisma'
 
 export const config = { api: { bodyParser: false } }
 
@@ -21,9 +22,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const fileArray = files.file
     const file = Array.isArray(fileArray) ? fileArray[0] : fileArray
     const localId = Array.isArray(fields.localId) ? fields.localId[0] : fields.localId
+    const formId = Array.isArray(fields.formId) ? fields.formId[0] : fields.formId
     const description = Array.isArray(fields.description) ? fields.description[0] : fields.description
 
     if (!file) return res.status(400).json({ error: 'No file provided' })
+    if (!formId) return res.status(400).json({ error: 'formId required' })
 
     const supabase = createServerClient()
     const ext = path.extname(file.originalFilename ?? '.bin')
@@ -44,6 +47,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .from('ievc-historico')
       .getPublicUrl(fileName)
 
+    const attachment = await prisma.attachment.create({
+      data: {
+        formId,
+        fileUrl: urlData.publicUrl,
+        thumbnailUrl: file.mimetype?.startsWith('image/') ? urlData.publicUrl : null,
+        originalFilename: file.originalFilename,
+        mimeType: file.mimetype,
+        sizeBytes: file.size,
+        description,
+        localId,
+        uploadStatus: 'UPLOADED',
+      },
+    })
+
     // Clean up temp file
     fs.unlink(file.filepath, () => {})
 
@@ -56,6 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       mimeType: file.mimetype,
       sizeBytes: file.size,
       description,
+      attachmentId: attachment.id,
     })
   } catch (err) {
     console.error('Upload error:', err)

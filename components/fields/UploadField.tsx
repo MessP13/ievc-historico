@@ -11,7 +11,7 @@ function generateId() {
 
 export default function UploadField() {
   const { t } = useTranslation('common')
-  const { attachments, addAttachment, updateAttachment, removeAttachment } = useFormStore()
+  const { formId, attachments, addAttachment, updateAttachment, removeAttachment } = useFormStore()
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
   const [processing, setProcessing] = useState(false)
@@ -54,6 +54,10 @@ export default function UploadField() {
 
   const uploadOne = async (att: AttachmentLocal) => {
     if (!att.file || att.uploadStatus === 'uploading' || att.uploadStatus === 'uploaded') return
+    if (!formId) {
+      updateAttachment(att.localId, { uploadStatus: 'failed' })
+      return
+    }
 
     updateAttachment(att.localId, { uploadStatus: 'uploading' })
 
@@ -61,6 +65,7 @@ export default function UploadField() {
       const form = new FormData()
       form.append('file', att.file)
       form.append('localId', att.localId)
+      form.append('formId', formId)
       if (att.description) form.append('description', att.description)
 
       const res = await fetch('/api/upload', { method: 'POST', body: form })

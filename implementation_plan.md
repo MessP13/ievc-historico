@@ -16,6 +16,7 @@ Este documento e a fonte de verdade operacional do projeto. Deve ser lido e atua
 - Banco: schema Prisma define `Province`, `District`, `User`, `Form`, `Answer`, `PastorEntry` e `Attachment`, com cascata em respostas, pastores e anexos quando o formulario e removido.
 - Idiomas configurados: `pt`, `en`, `sn`, `ts`, `nd`.
 - PWA: configurado via `@ducanh2912/next-pwa`, com service worker gerado em build.
+- Direcao de produto: quem preenche o formulario e um usuario simples, sem login externo, sem Google e sem exigencia tecnica. A experiencia publica deve ser direta: abrir, preencher, anexar, enviar. Contas internas ficam restritas a administradores/pastores da plataforma.
 
 ## 2. Funcionalidades Implementadas
 
@@ -39,9 +40,9 @@ Este documento e a fonte de verdade operacional do projeto. Deve ser lido e atua
 
 ## 4. Riscos e Problemas Encontrados
 
-- Fluxo de cadastro: `pages/entrar.tsx` chama `PUT /api/users/me` enviando `fullName` e `phone`, mas `pages/api/users/me.ts` exige `userId`. Resultado provavel: novo utilizador nao consegue concluir o passo de nome.
-- Criacao/submissao de formulario: a pagina `/formulario` permite concluir localmente se `formId` estiver ausente; isso preserva UX offline, mas pode gerar falsa sensacao de submissao ao banco.
-- API `/api/forms/[id]/submit`: salva `section` como `questionKey`, enquanto `/api/forms/[id]/answers` usa mapeamento correto por secao. Isso pode prejudicar exportacao/organizacao dos dados.
+- Resolvido na Fase 1: `/entrar` agora envia `userId` para `/api/users/me` quando usado.
+- Resolvido na Fase 1: `/formulario` nao confirma submissao sem `formId`; ele cria rascunho automatico e pede nova tentativa se o formulario online ainda nao estiver pronto.
+- Resolvido na Fase 1: `/api/forms/[id]/submit` e `/api/forms/[id]/answers` usam helper unico para secao.
 - Admin e APIs sensiveis: painel `/admin` e exportacoes dependem de dados Prisma, mas precisam de protecao clara por sessao, role ou `ADMIN_API_KEY`.
 - Supabase RLS: ainda precisa ser confirmado/aplicado para as tabelas do projeto sem alterar tabelas legadas de outros subprojetos.
 - Build em Windows: a etapa final de traces pode ser lenta demais ou ficar presa; investigar se ha impacto de `.next`, PWA, antivirus/indexacao ou dependencias.
@@ -57,15 +58,49 @@ Este documento e a fonte de verdade operacional do projeto. Deve ser lido e atua
 
 ## 6. Proximos Passos Recomendados
 
-- [ ] Corrigir o envio de `userId` em `/entrar` ou flexibilizar `/api/users/me` para obter o utilizador autenticado de forma segura.
-- [ ] Normalizar a secao salva por `/api/forms/[id]/submit` usando o mesmo mapeamento de `/api/forms/[id]/answers`.
-- [ ] Proteger `/admin` e rotas de exportacao com autenticacao/autorizacao.
-- [ ] Criar configuracao ESLint nao interativa e rodar `npm run lint` de verdade.
-- [ ] Investigar timeout do `npm run build` na etapa de traces e confirmar build completo em ambiente limpo.
-- [ ] Auditar RLS e policies Supabase para as tabelas Prisma deste projeto.
-- [ ] Validar fluxo completo: entrar por telefone, criar formulario, autosave, upload, submissao, revisao admin e exportacao.
-- [ ] Confirmar variaveis no painel Vercel sem expor valores no repositorio.
+### Fase 1 - Plano
+
+- [x] Remover dependencia de login para o publico.
+- [x] Criar ou recuperar automaticamente um rascunho de formulario por dispositivo.
+- [x] Guardar nome, telefone, localizacao e igreja a partir do proprio formulario.
+- [x] Normalizar a secao salva por todas as APIs de respostas.
+- [x] Vincular uploads ao formulario no banco.
+- [x] Manter admin como area interna da plataforma, com protecao a evoluir nas fases seguintes.
+
+### Fase 1 - Coding
+
+- [x] Criar helper unico para mapear `questionKey` para secao.
+- [x] Ajustar `/api/forms` para aceitar criacao simples sem autenticacao publica.
+- [x] Ajustar autosave para funcionar com rascunho automatico.
+- [x] Ajustar submit para salvar metadados do formulario e secoes corretas.
+- [x] Ajustar upload para registrar `Attachment` quando houver `formId`.
+
+### Fase 1 - Upload
+
+- [x] Garantir que anexos adicionados pelo usuario sejam enviados para Supabase Storage.
+- [x] Persistir URL, thumbnail, nome original, MIME, tamanho e descricao na tabela `Attachment`.
+- [x] Mostrar estado compreensivel no formulario: pendente, a enviar, enviado ou falhou.
+
+### Fase 1 - Test
+
+- [x] `npx tsc --noEmit`.
+- [x] `npm run build`.
+- [ ] Validar manualmente no browser: criacao de formulario sem login.
+- [ ] Validar manualmente no browser: autosave e submissao.
+- [ ] Validar manualmente no browser: upload com `formId` e Supabase Storage.
+- [x] Registrar qualquer bloqueio de ambiente sem expor secrets.
+
+### Fases Seguintes
+
+- [x] Fase 2: painel admin com filtros por estado/provincia, busca por igreja, paginacao e contagem filtrada.
+- [ ] Fase 2b: painel admin com metricas por provincia/distrito e revisao mais clara.
+- [ ] Fase 3: logs/auditoria, `requestId`, padronizacao de erros e historico de decisoes.
+- [ ] Fase 4: protecao interna de admin/pastores por credenciais da plataforma, roles e escopo por provincia/distrito.
+- [ ] Fase 5: RLS Supabase, migrations revisaveis, hardening de storage e exports.
+- [ ] Fase 6: performance, build, lint nao interativo, testes automatizados e polimento UX.
 
 ## 7. Historico Recente
 
 - 2026-05-15: executada contextualizacao do ToDo `.todo4vcode/shared-tasks.json`; analisados arquivos principais, schema Prisma, integracao Supabase, configuracao Vercel local, Git remoto e site publico; plano atualizado com estado atual, riscos e proximos passos.
+- 2026-05-15: iniciada Fase 1. Implementado fluxo publico sem login: `/formulario` cria rascunho automatico por dispositivo, autosave salva respostas sem exigir `userId` no cliente, APIs gravam metadados do formulario, secoes sao mapeadas por helper unico, pastores sao sincronizados em `PastorEntry`, upload registra `Attachment`, e `/entrar` foi corrigido para enviar `userId` quando usado. Validacoes: `npx tsc --noEmit` e `npm run build` passaram.
+- 2026-05-15: iniciada Fase 2 do admin. `/admin` passou a usar filtros por estado e provincia, busca por nome da igreja, paginacao de 20 itens e contagem de resultados filtrados para reduzir carga e facilitar revisao. Validacao: `npx tsc --noEmit` passou; `npm run build` compilou server/client/PWA, mas excedeu 600s em `Collecting page data`.

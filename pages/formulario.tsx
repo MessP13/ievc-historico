@@ -1,5 +1,5 @@
 // pages/formulario.tsx
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
 import Head from 'next/head'
 import { useTranslation } from 'next-i18next'
@@ -34,12 +34,13 @@ export default function FormularioPage() {
   const router = useRouter()
   const {
     currentSection, setSection,
-    answers, formId,
-    isSubmitted, setSubmitted,
+    answers, formId, clientId,
+    isSubmitted, setSubmitted, setFormId, setUserId, setClientId,
   } = useFormStore()
 
   useAutoSave()
 
+  const creatingDraftRef = useRef(false)
   const [direction, setDirection] = useState(1)
   const [showConfirm, setShowConfirm] = useState(false)
   const [submitting, setSubmitting] = useState(false)
@@ -50,6 +51,48 @@ export default function FormularioPage() {
 
   const sectionId = section.id
   const info = SECTION_INFO[sectionId] ?? { title: sectionId, subtitle: '' }
+
+  useEffect(() => {
+    if (clientId) return
+    const nextClientId =
+      typeof crypto !== 'undefined' && 'randomUUID' in crypto
+        ? crypto.randomUUID()
+        : `client_${Date.now()}_${Math.random().toString(36).slice(2, 10)}`
+    setClientId(nextClientId)
+  }, [clientId, setClientId])
+
+  useEffect(() => {
+    if (!clientId || formId || creatingDraftRef.current) return
+
+    creatingDraftRef.current = true
+    fetch('/api/forms', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        clientId,
+        fullName: answers.full_name,
+        phone: answers.phone,
+        provinceId: answers.province_id,
+        districtId: answers.district_id,
+        churchName: answers.church_name,
+        language: answers.language,
+      }),
+    })
+      .then(async (res) => {
+        if (!res.ok) throw new Error('Failed to create draft')
+        return res.json()
+      })
+      .then((data) => {
+        if (data.id) setFormId(data.id)
+        if (data.user?.id) setUserId(data.user.id)
+      })
+      .catch(() => {
+        toast.error('Nao foi possivel preparar o formulario online. Pode continuar e tentaremos guardar depois.')
+      })
+      .finally(() => {
+        creatingDraftRef.current = false
+      })
+  }, [answers, clientId, formId, setFormId, setUserId])
 
   const goNext = () => {
     if (currentSection === TOTAL_SECTIONS) { setShowConfirm(true); return }
@@ -71,8 +114,7 @@ export default function FormularioPage() {
     try {
       // If no formId, save locally and redirect
       if (!formId) {
-        setSubmitted(true)
-        router.push('/obrigado')
+        toast.error('Ainda estamos a preparar o formulario. Tente novamente dentro de alguns segundos.')
         return
       }
       const res = await fetch(`/api/forms/${formId}/submit`, {
